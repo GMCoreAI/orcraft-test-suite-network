@@ -1,0 +1,19 @@
+name: License Scan
+
+# Every pull request scans the files it touches for licence texts, notices,
+# SPDX tags and copyright statements that are not ours, through the reusable
+# scan in ci-workflows: this repository is published under the MIT licence, so a file carrying any other licence, or a copyright holder other than GM Core, does not belong here. A finding fails the
+# pull request and names the file and lines that carry it.
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  licenses:
+    uses: GMCoreAI/ci-workflows/.github/workflows/license-scan.yml@main
+    with:
+      policy: mit

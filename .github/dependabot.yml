@@ -1,0 +1,13 @@
+# Dependabot: alerts are enabled on the repository; this file asks for
+# version updates of the GitHub Actions the workflows use, as one
+# grouped pull request a month, so a pinned action never goes stale unnoticed.
+
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    groups:
+      actions:
+        patterns: ["*"]
