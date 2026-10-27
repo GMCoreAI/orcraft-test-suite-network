@@ -1,0 +1,34 @@
+name: PR Gate
+
+# Every pull request is checked by GM Core's CI: the files it touches must carry
+# no licence or copyright that is not ours, and the history must hold no secret.
+# The checks run there and report back here as the "licenses" and "secrets"
+# statuses, which a merge requires; this workflow only asks for them.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions: {}
+
+jobs:
+  request:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Token of the gate's app
+        id: app
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.PR_GATE_CLIENT_ID }}
+          private-key: ${{ secrets.PR_GATE_PRIVATE_KEY }}
+          owner: GMCoreAI
+          repositories: ci-workflows
+          permission-actions: write
+
+      - name: Ask for the checks
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          REPOSITORY: ${{ github.event.repository.name }}
+          NUMBER: ${{ github.event.pull_request.number }}
+        run: gh workflow run public-pr-gate.yml --repo GMCoreAI/ci-workflows -f repository="$REPOSITORY" -f pull-request="$NUMBER"
