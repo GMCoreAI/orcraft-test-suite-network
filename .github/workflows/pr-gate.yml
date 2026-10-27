@@ -31,4 +31,8 @@ jobs:
           GH_TOKEN: ${{ steps.app.outputs.token }}
           REPOSITORY: ${{ github.event.repository.name }}
           NUMBER: ${{ github.event.pull_request.number }}
-        run: gh workflow run public-pr-gate.yml --repo GMCoreAI/ci-workflows -f repository="$REPOSITORY" -f pull-request="$NUMBER"
+        # The token may start workflows and nothing else, so the request goes
+        # straight to the dispatch endpoint, which needs no other read.
+        run: >-
+          gh api --method POST repos/GMCoreAI/ci-workflows/actions/workflows/public-pr-gate.yml/dispatches
+          -f ref=main -f "inputs[repository]=$REPOSITORY" -f "inputs[pull-request]=$NUMBER"
